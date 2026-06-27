@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mini Lambda Calculus Demo</title>
+
+<style>
+body {
+    font-family: system-ui, sans-serif;
+    max-width: 800px;
+    margin: 40px auto;
+    background: #f6f6f6;
+    color: #222;
+}
+
+h1 {
+    margin-bottom: 0;
+}
+
+textarea {
+    width: 100%;
+    height: 70px;
+    font-size: 18px;
+    font-family: monospace;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 25px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 18px;
+    white-space: pre-wrap;
+}
+
+.example {
+    margin-top: 20px;
+    color: gray;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Lambda Calculus Playground</h1>
+
+<p>
+Enter an expression like
+</p>
+
+<pre>(λx.x) y
+(λx.xx) z
+(λx.λy.xy) a</pre>
+
+<textarea id="input">(λx.x) y</textarea>
+
+<button onclick="reduce()">Reduce One Step</button>
+
+<div id="result">
+Result appears here.
+</div>
+
+<div class="example">
+Only very simple expressions are supported.
+This is just a UI demonstration.
+</div>
+
+<script>
+
+function substitute(body, variable, value)
+{
+    const regex = new RegExp("\\\\b" + variable + "\\\\b", "g");
+    return body.replace(regex, value);
+}
+
+function reduce()
+{
+    const input = document.getElementById("input").value.trim();
+
+    const regex =
+        /^\(\s*[λ\\]([a-zA-Z])\.(.+)\)\s+(.+)$/;
+
+    const match = input.match(regex);
+
+    if (!match)
+    {
+        document.getElementById("result").textContent =
+            "Could not parse expression.";
+        return;
+    }
+
+    const variable = match[1];
+    const body = match[2].trim();
+    const argument = match[3].trim();
+
+    const reduced = substitute(body, variable, argument);
+
+    document.getElementById("result").innerHTML =
+`
+Expression
+
+${input}
+
+↓
+
+β-reduction
+
+${reduced}
+`;
+}
+
+reduce();
+
+</script>
+
+</body>
+</html>
